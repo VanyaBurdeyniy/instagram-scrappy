@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+<head>
+    <title>Sample App</title>
+    <link rel="stylesheet" href="semantic.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Arima+Madurai|Lobster" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Baloo+Chettan" rel="stylesheet">
+
+    <style>
+        html, body {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            /*background-image: url('react.jpg');*/
+            /*background-size: cover;*/
+            /*background-repeat: no-repeat;*/
+            background: #5f2c82; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to left, #5f2c82 , #49a09d); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to left, #5f2c82 , #49a09d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        }
+
+        .main {
+
+        }
+        h1 {
+            /*font-family: 'Baloo Chettan', cursive;*/
+        }
+        .logo {
+            font-family: 'Lobster', cursive !important;
+            font-size: 28px;
+            padding: 10px !important;
+            margin-right: 30px !important;
+        }
+        .column {
+            width: 80% !important;
+            margin-top: 50px !important;
+        }
+        #my_camera, #my_result, #my_result img {
+            width:100%;
+            height:300px;
+        }
+        #my_result img {
+            width: 80%;
+        }
+        .border-right {
+            border-right: 1px solid lightgrey;
+        }
+        .hide {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="pusher main" id="root"></div>
+
+<div class="ui middle aligned center aligned grid">
+    <div class="column">
+        <div class="ui stacked segment">
+
+            <div class="ui huge form">
+                <div class="two fields">
+                    <div class="field">
+                        <label>Username:</label>
+                        <input id="userName" placeholder="Username" type="text">
+                    </div>
+                    <div class="field">
+                        <label>Followers max length:</label>
+                        <input id="length" placeholder="Max length" type="number">
+                    </div>
+                </div>
+                <a class="positive ui button userId">Get Link</a>
+
+                <a class="ui teal button link hide" href="" target="_blank">Go here</a>
+            </div>
+
+            <br>
+
+            <div class="ui form">
+                <div class="field">
+                    <label>Paste here:</label>
+                    <textarea id="json_code"></textarea>
+                    <br>
+                    <br>
+                    <button class="ui violet button get-csv-btn">Get a CSV file!</button>
+                    <a class="ui purple basic button download-csv hide">Download CSV!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="semantic.min.js"></script>
+
+<script language="JavaScript">
+
+    $(document).ready(function() {
+
+        $('.userId').click(function() {
+            $('.link').addClass('hide');
+            $.ajax({
+                "type": "GET",
+                "url": '/userId',
+                data: 'name=' + $('#userName').val(),
+                contentType: 'application/json',
+                jsonp: false,
+                "crossDomain": true,
+                "success": function(data) {
+                    console.log(data);
+//                    var url = 'https://www.instagram.com/query/?q=ig_user(' + data.id + ')+%7B%0A++followed_by.first(' + $('#length').val() + ')+%7B%0A++++count%2C%0A++++page_info+%7B%0A++++++end_cursor%2C%0A++++++has_next_page%0A++++%7D%2C%0A++++nodes+%7B%0A++++++id%2C%0A++++++is_verified%2C%0A++++++followed_by_viewer%2C%0A++++++requested_by_viewer%2C%0A++++++full_name%2C%0A++++++profile_pic_url%2C%0A++++++username%0A++++%7D%0A++%7D%0A%7D%0A&ref=relationships%3A%3Afollow_list'
+                    var url = 'https://www.instagram.com/query/?q=ig_user(' + data.id +')+%7B%0A++follows.first(' + $('#length').val() + ')+%7B%0A++++count%2C%0A++++page_info+%7B%0A++++++end_cursor%2C%0A++++++has_next_page%0A++++%7D%2C%0A++++nodes+%7B%0A++++++id%2C%0A++++++is_verified%2C%0A++++++followed_by_viewer%2C%0A++++++requested_by_viewer%2C%0A++++++full_name%2C%0A++++++profile_pic_url%2C%0A++++++username%0A++++%7D%0A++%7D%0A%7D%0A&ref=relationships%3A%3Afollow_list';
+                    $('.link').attr('href', url);
+                    $('.link').removeClass('hide');
+                },
+                "error": function(err) {
+                    console.log(err);
+                }
+            });
+        });
+
+        $('.get-csv-btn').click(function() {
+            if ($('#json_code').val() !== '') {
+                var json = JSON.parse($('#json_code').val());
+                console.log(json.follows.nodes);
+                var followers = {
+                    followers: json.follows.nodes
+                };
+
+                fetch('/followers', {
+                    method: 'post',
+                    body: JSON.stringify(followers),
+                    headers: new Headers({
+                        'Content-Type': 'application/json',
+                        'jsonp': true
+                    })
+                }).then(function (d) {
+                    d.json().then(function(data) {
+                      console.log(data);
+                        $('.download-csv').attr('href', data.url);
+                        $('.download-csv').removeClass('hide');
+                    });
+                }).catch(function (err) {
+                    console.log(err);
+                });
+            }
+        });
+    })
+</script>
+</body>
+</html>
