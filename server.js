@@ -74,7 +74,7 @@ app.post('/followers', function(req, res) {
 
         fs.writeFile(__dirname + '/public/followers.csv', csv, function(data) {
             console.log(data);
-            res.status(200).jsonp({followers: followersFiltered, csv: csv, url: 'http://localhost:4000/followers.csv'});
+            res.status(200).jsonp({followers: followersFiltered, csv: csv, url: 'http://localhost:6320/followers.csv'});
         });
     });
 });
@@ -105,5 +105,5 @@ function getFollowerBio(follower) {
 
 
 
-app.listen(4000);
-console.log('Server listening on port 4000');
+app.listen(6320);
+console.log('Server listening on port 6320');
