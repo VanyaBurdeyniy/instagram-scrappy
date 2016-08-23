@@ -8,7 +8,7 @@ var request = require('request');
 var fs = require('fs');
 var converter = require('json-2-csv');
 var mongoose = require('mongoose');
-var db = mongoose.connect('mongodb://185.65.246.183:27017/instagram-scrapper');
+var db = mongoose.connect('mongodb://localhost:27017/instagram-scrapper');
 require('./models/user.model');
 var User = mongoose.model('User');
 var followersFiltered;
