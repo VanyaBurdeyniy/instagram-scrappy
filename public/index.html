@@ -12,10 +12,6 @@
             margin: 0;
             padding: 0;
             min-height: 100%;
-            /*background-image: url('react.jpg');*/
-            /*background-size: cover;*/
-            /*background-repeat: no-repeat;*/
-            background: #5f2c82; /* fallback for old browsers */
             background: -webkit-linear-gradient(to left, #5f2c82 , #49a09d); /* Chrome 10-25, Safari 5.1-6 */
             background: linear-gradient(to left, #5f2c82 , #49a09d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
         }
@@ -45,6 +41,14 @@
         }
         .border-right {
             border-right: 1px solid lightgrey;
+        }
+        .loader {
+            position: absolute !important;
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            background: rgba(0, 0, 0, 0) !important;
+            display: block !important;
         }
         .hide {
             display: none !important;
@@ -91,6 +95,15 @@
     </div>
 </div>
 
+<div class="ui segment loader hide">
+    <div class="ui active inverted dimmer">
+        <div class="ui large text loader">Loading</div>
+    </div>
+    <p></p>
+    <p></p>
+    <p></p>
+</div>
+
 
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script src="semantic.min.js"></script>
@@ -98,6 +111,8 @@
 <script language="JavaScript">
 
     $(document).ready(function() {
+
+        var count = 0;
 
         $('.userId').click(function() {
             $('.link').addClass('hide');
@@ -122,31 +137,65 @@
         });
 
         $('.get-csv-btn').click(function() {
+            $('.download-csv').addClass('hide');
+            $('.loader').removeClass('hide');
+            count = 0;
             if ($('#json_code').val() !== '') {
                 var json = JSON.parse($('#json_code').val());
                 console.log(json.follows.nodes);
                 var followers = {
                     followers: json.follows.nodes
                 };
+                getFolowUserBio(followers);
+            }
+        });
 
-                fetch('/followers', {
+        function getFolowUserBio(followers) {
+            if (count < followers.followers.length) {
+                fetch('/bio', {
                     method: 'post',
-                    body: JSON.stringify(followers),
+                    body: JSON.stringify({name: followers.followers[count].username}),
                     headers: new Headers({
                         'Content-Type': 'application/json',
                         'jsonp': true
                     })
                 }).then(function (d) {
                     d.json().then(function(data) {
-                      console.log(data);
-                        $('.download-csv').attr('href', data.url);
-                        $('.download-csv').removeClass('hide');
+                        console.log(data);
+                        if (data.bio !== null) {
+                            followers.followers[count].followUserBio = data.bio;
+                            followers.followers[count].followUserFollow = data.follows;
+                        }
+                        count++;
+                        getFolowUserBio(followers);
                     });
                 }).catch(function (err) {
                     console.log(err);
                 });
+            } else {
+                getCSV(followers);
             }
-        });
+        }
+
+        function getCSV(followers) {
+            fetch('/followers?name=' + $('#userName').val(), {
+                method: 'post',
+                body: JSON.stringify(followers),
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'jsonp': true
+                })
+            }).then(function (d) {
+                d.json().then(function(data) {
+                    console.log(data);
+                    $('.download-csv').attr('href', data.url);
+                    $('.download-csv').removeClass('hide');
+                    $('.loader').addClass('hide');
+                });
+            }).catch(function (err) {
+                console.log(err);
+            });
+        }
     })
 </script>
 </body>

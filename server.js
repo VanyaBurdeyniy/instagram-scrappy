@@ -4,12 +4,14 @@ var bodyParser = require('body-parser');
 var jsdom = require("jsdom");
 var Crawler = require("crawler");
 var url = require('url');
+var request = require('request');
 var fs = require('fs');
 var converter = require('json-2-csv');
 var mongoose = require('mongoose');
-var db = mongoose.connect('mongodb://localhost:27017/instagram-scrapper');
+var db = mongoose.connect('mongodb://185.65.246.183:27017/instagram-scrapper');
 require('./models/user.model');
 var User = mongoose.model('User');
+var followersFiltered;
 
 app.use(express.static(__dirname + '/public'));
 
@@ -56,54 +58,41 @@ app.get('/userId', function(req, res) {
   }]);
 });
 
+
 app.post('/followers', function(req, res) {
     var followers = req.body.followers,
         followersFiltered = [];
     followers.forEach(function(follower) {
-        followersFiltered.push({
-            followerId: follower.id,
-            followerAvatar: follower.profile_pic_url,
-            followerUserName: follower.username,
-            followerFullName: follower.full_name
-        });
+        if (follower.followUserBio) {
+            followersFiltered.push({
+                followUserFollow: follower.followUserFollow,
+                followUserBio: follower.followUserBio,
+                followerId: follower.id,
+                followerAvatar: follower.profile_pic_url,
+                followerUserName: follower.username,
+                followerFullName: follower.full_name
+            });
+        }
     });
+    console.log(followersFiltered);
     User.insertMany(followersFiltered);
     converter.json2csv(followersFiltered, function(err, csv) {
         if (err) res.status(500).jsonp(err);
-        console.log(csv);
-
-        fs.writeFile(__dirname + '/public/followers.csv', csv, function(data) {
+        fs.writeFile(__dirname + '/public/' + req.query.name + '.csv', csv, function(data) {
             console.log(data);
-            res.status(200).jsonp({followers: followersFiltered, csv: csv, url: 'http://185.65.246.183:6320/followers.csv'});
+            res.status(200).jsonp({followers: followersFiltered, csv: csv, url: 'http://185.65.246.183:6230/' + req.query.name + '.csv'});
         });
     });
 });
 
-function getFollowerBio(follower) {
-    c.queue([{
-        uri: 'https://smashballoon.com/instagram-feed/find-instagram-user-id/?username=' + req.query.name,
-        jQuery: false,
-        callback: function(error, result) {
-            jsdom.env(
-                result.body,
-                ["./jquery.js"],
-                function(err, window) {
-                    var userId = [];
-                    var id = window.$('html').find('#show_id').find('b').each(function(e, index) {
-                        if (window.$(index).text().match('User ID:')) {
-                            userId.push(window.$(index).text());
-                        }
-                    });
-                    userId = userId[0].replace('User ID:', '');
-                    userId = userId.replace(' ', '');
-                    res.status(200).jsonp({id: userId, name: req.query.name});
-                }
-            );
+app.post('/bio', function(req, res) {
+    request('https://www.instagram.com/' + req.body.name + '/?__a=1', function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            body = JSON.parse(body);
+            res.status(200).jsonp({bio: body.user.biography, follows: body.user.follows.count});
         }
-    }]);
-}
+    });
+});
 
-
-
-app.listen(6320);
-console.log('Server listening on port 6320');
+app.listen(6230);
+console.log('Server listening on port 6230');

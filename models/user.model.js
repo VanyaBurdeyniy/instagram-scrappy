@@ -6,6 +6,8 @@ var Userchema = new Schema({
     followerAvatar: String,
     followerUserName: String,
     followerFullName: String,
+    followUserFollow: Number,
+    followUserBio: String,
     created: {
         type: Date,
         default: Date.now
