@@ -63,10 +63,11 @@ app.post('/followers', function(req, res) {
     var followers = req.body.followers,
         followersFiltered = [];
     followers.forEach(function(follower) {
-        if (follower.followUserBio) {
+        if (follower.followUserBio && follower.followUserBio.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)) {
+            var emailBio = follower.followUserBio.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
             followersFiltered.push({
                 followUserFollow: follower.followUserFollow,
-                followUserBio: follower.followUserBio,
+                followUserBio: emailBio[0],
                 followerId: follower.id,
                 followerAvatar: follower.profile_pic_url,
                 followerUserName: follower.username,
@@ -89,7 +90,7 @@ app.post('/bio', function(req, res) {
     request('https://www.instagram.com/' + req.body.name + '/?__a=1', function (error, response, body) {
         if (!error && response.statusCode == 200) {
             body = JSON.parse(body);
-            res.status(200).jsonp({bio: body.user.biography, follows: body.user.follows.count});
+            res.status(200).jsonp({bio: body.user.biography, follows: body.user.followed_by.count});
         }
     });
 });
