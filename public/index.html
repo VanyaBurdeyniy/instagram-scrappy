@@ -53,6 +53,11 @@
         .hide {
             display: none !important;
         }
+        select.ui.dropdown {
+            height: 50px;
+            width: 250px !important;
+            margin: auto !important;
+        }
     </style>
 </head>
 <body>
@@ -64,6 +69,15 @@
         <div class="ui stacked segment">
 
             <div class="ui huge form">
+
+                <div class="field">
+                    <label>Get:</label>
+                    <select class="ui fluid dropdown" id="search_for">
+                        <option value="follows">Follows</option>
+                        <option value="followed_by">Followers</option>
+                    </select>
+                </div>
+
                 <div class="two fields">
                     <div class="field">
                         <label>Username:</label>
@@ -124,9 +138,10 @@
                 jsonp: false,
                 "crossDomain": true,
                 "success": function(data) {
-                    console.log(data);
+//                    console.log(data);
+                    var searcFor = $('#search_for').val();
 //                    var url = 'https://www.instagram.com/query/?q=ig_user(' + data.id + ')+%7B%0A++followed_by.first(' + $('#length').val() + ')+%7B%0A++++count%2C%0A++++page_info+%7B%0A++++++end_cursor%2C%0A++++++has_next_page%0A++++%7D%2C%0A++++nodes+%7B%0A++++++id%2C%0A++++++is_verified%2C%0A++++++followed_by_viewer%2C%0A++++++requested_by_viewer%2C%0A++++++full_name%2C%0A++++++profile_pic_url%2C%0A++++++username%0A++++%7D%0A++%7D%0A%7D%0A&ref=relationships%3A%3Afollow_list'
-                    var url = 'https://www.instagram.com/query/?q=ig_user(' + data.id +')+%7B%0A++follows.first(' + $('#length').val() + ')+%7B%0A++++count%2C%0A++++page_info+%7B%0A++++++end_cursor%2C%0A++++++has_next_page%0A++++%7D%2C%0A++++nodes+%7B%0A++++++id%2C%0A++++++is_verified%2C%0A++++++followed_by_viewer%2C%0A++++++requested_by_viewer%2C%0A++++++full_name%2C%0A++++++profile_pic_url%2C%0A++++++username%0A++++%7D%0A++%7D%0A%7D%0A&ref=relationships%3A%3Afollow_list';
+                    var url = 'https://www.instagram.com/query/?q=ig_user(' + data.id +')+%7B%0A++' + searcFor + '.first(' + $('#length').val() + ')+%7B%0A++++count%2C%0A++++page_info+%7B%0A++++++end_cursor%2C%0A++++++has_next_page%0A++++%7D%2C%0A++++nodes+%7B%0A++++++id%2C%0A++++++is_verified%2C%0A++++++followed_by_viewer%2C%0A++++++requested_by_viewer%2C%0A++++++full_name%2C%0A++++++profile_pic_url%2C%0A++++++username%0A++++%7D%0A++%7D%0A%7D%0A&ref=relationships%3A%3Afollow_list';
                     $('.link').attr('href', url);
                     $('.link').removeClass('hide');
                 },
@@ -142,9 +157,10 @@
             count = 0;
             if ($('#json_code').val() !== '') {
                 var json = JSON.parse($('#json_code').val());
-                console.log(json.follows.nodes);
+                var searcFor = $('#search_for').val();
+//                console.log(json[searcFor].nodes);
                 var followers = {
-                    followers: json.follows.nodes
+                    followers: json[searcFor].nodes
                 };
                 getFolowUserBio(followers);
             }
@@ -161,7 +177,7 @@
                     })
                 }).then(function (d) {
                     d.json().then(function(data) {
-                        console.log(data);
+//                        console.log(data);
                         if (data.bio !== null) {
                             followers.followers[count].followUserBio = data.bio;
                             followers.followers[count].followUserFollow = data.follows;
@@ -187,7 +203,7 @@
                 })
             }).then(function (d) {
                 d.json().then(function(data) {
-                    console.log(data);
+//                    console.log(data);
                     $('.download-csv').attr('href', data.url);
                     $('.download-csv').removeClass('hide');
                     $('.loader').addClass('hide');

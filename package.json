@@ -1,0 +1,31 @@
+{
+  "name": "instagram-scrappy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "jquery.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VanyaBurdeyniy/instagram-scrappy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VanyaBurdeyniy/instagram-scrappy/issues"
+  },
+  "homepage": "https://github.com/VanyaBurdeyniy/instagram-scrappy#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "crawler": "^0.4.3",
+    "express": "^4.14.0",
+    "fs": "0.0.1-security",
+    "jsdom": "^9.8.3",
+    "json-2-csv": "^2.1.0",
+    "mongoose": "^4.6.5",
+    "request": "^2.76.0",
+    "url": "^0.11.0"
+  }
+}
