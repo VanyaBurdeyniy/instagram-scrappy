@@ -83,7 +83,7 @@ app.post('/followers', function(req, res) {
         fs.writeFile(__dirname + '/public/' + req.query.name + '.csv', csv, function(data) {
             console.log(data);
             // res.status(200).jsonp({followers: followersFiltered, csv: csv, url: 'http://185.65.246.183:6230/' + req.query.name + '.csv'});
-            res.status(200).jsonp({followers: followersFiltered, csv: csv, url: 'http://localhost:6230/' + req.query.name + '.csv'});
+            res.status(200).jsonp({followers: followersFiltered, csv: csv, url: 'http://159.203.69.143:6230/' + req.query.name + '.csv'});
         });
     });
 });
