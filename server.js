@@ -8,11 +8,20 @@ var request = require('request');
 var fs = require('fs');
 var converter = require('json-2-csv');
 var mongoose = require('mongoose');
+var cors = require('cors');
 var db = mongoose.connect('mongodb://localhost:27017/instagram-scrapper');
 require('./models/user.model');
 var User = mongoose.model('User');
 var followersFiltered;
 
+server = require('https').createServer({
+    ca: [fs.readFileSync(__dirname + '/cert/root.crt'), fs.readFileSync(__dirname + '/cert/1_cross_Intermediate.crt'), fs.readFileSync(__dirname + '/cert/2_issuer_Intermediate.crt')],
+    key: fs.readFileSync(__dirname + '/cert/4_user_doit-cheers.in.ua.key'),
+    cert: fs.readFileSync(__dirname + '/cert/3_user_doit-cheers.in.ua.crt'),
+    keyphrase: 'doit'
+}, app).listen(4433);
+
+app.use(cors());
 app.use(express.static(__dirname + '/public'));
 
 app.use(bodyParser.json({limit: '50mb'}));
@@ -97,5 +106,24 @@ app.post('/bio', function(req, res) {
     });
 });
 
-app.listen(6230);
+
+function getPage() {
+    c.queue([{
+        uri: 'https://www.instagram.com/query/?q=ig_user(559802352)+%7B%0A++follows.first(10)+%7B%0A++++count%2C%0A++++page_info+%7B%0A++++++end_cursor%2C%0A++++++has_next_page%0A++++%7D%2C%0A++++nodes+%7B%0A++++++id%2C%0A++++++is_verified%2C%0A++++++followed_by_viewer%2C%0A++++++requested_by_viewer%2C%0A++++++full_name%2C%0A++++++profile_pic_url%2C%0A++++++username%0A++++%7D%0A++%7D%0A%7D%0A&ref=relationships%3A%3Afollow_list',
+        jQuery: false,
+        callback: function(error, result) {
+            console.log(result.body);
+            jsdom.env(
+                result.body,
+                ["./jquery.js"],
+                function(err, window) {
+                    console.log('yeeeees');
+                }
+            );
+        }
+    }]);
+}
+getPage();
+
+// app.listen(6230);
 console.log('Server listening on port 6230');
