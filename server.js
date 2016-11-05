@@ -19,7 +19,7 @@ server = require('https').createServer({
     key: fs.readFileSync(__dirname + '/cert/4_user_doit-cheers.in.ua.key'),
     cert: fs.readFileSync(__dirname + '/cert/3_user_doit-cheers.in.ua.crt'),
     keyphrase: 'doit'
-}, app).listen(4433);
+}, app).listen(4433, '159.203.69.143');
 
 app.use(cors());
 app.use(express.static(__dirname + '/public'));
@@ -92,7 +92,7 @@ app.post('/followers', function(req, res) {
         fs.writeFile(__dirname + '/public/' + req.query.name + '.csv', csv, function(data) {
             console.log(data);
             // res.status(200).jsonp({followers: followersFiltered, csv: csv, url: 'http://185.65.246.183:6230/' + req.query.name + '.csv'});
-            res.status(200).jsonp({followers: followersFiltered, csv: csv, url: 'http://159.203.69.143:6230/' + req.query.name + '.csv'});
+            res.status(200).jsonp({followers: followersFiltered, csv: csv, url: 'https://159.203.69.143:4433/' + req.query.name + '.csv'});
         });
     });
 });
