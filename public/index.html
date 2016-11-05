@@ -246,8 +246,14 @@
 //            console.log(err);
 //        });
 
-        $.cors(url, function (data) {
-            console.log(data);
+        $.cors({
+            'url': url,
+            'success': function (data) {
+                console.log(data);
+            },
+            'error': function (err) {
+                console.log(err);
+            }
         });
 
         var iframe = document.getElementById('iframe');
