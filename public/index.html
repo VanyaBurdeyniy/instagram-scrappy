@@ -118,12 +118,8 @@
     <p></p>
 </div>
 
-<iframe id="iframe" crossorigin="anonymous"></iframe>
 
-
-<!--<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>-->
-<script src="https://code.jquery.com/jquery-1.8.2.js"></script>
-<script src="cors.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script src="semantic.min.js"></script>
 
 <script language="JavaScript">
@@ -133,13 +129,6 @@
         var count = 0;
 
         $('.userId').click(function() {
-
-            console.log($('#iframe').contents());
-            var iframeBody = document.getElementById('iframe');
-            var innerDoc = iframeBody.contentDocument || iframeBody.contentWindow.document;
-            console.log('iframe.contentWindow =', iframeBody.contentWindow);
-            console.log(innerDoc.body)
-
             $('.link').addClass('hide');
             $.ajax({
                 "type": "GET",
@@ -223,49 +212,6 @@
                 console.log(err);
             });
         }
-
-        var url = '//www.instagram.com/query/?q=ig_user(559802352)+%7B%0A++followed_by.first(10)+%7B%0A++++count%2C%0A++++page_info+%7B%0A++++++end_cursor%2C%0A++++++has_next_page%0A++++%7D%2C%0A++++nodes+%7B%0A++++++id%2C%0A++++++is_verified%2C%0A++++++followed_by_viewer%2C%0A++++++requested_by_viewer%2C%0A++++++full_name%2C%0A++++++profile_pic_url%2C%0A++++++username%0A++++%7D%0A++%7D%0A%7D%0A&ref=relationships%3A%3Afollow_list';
-
-//        fetch('https://www.instagram.com/query/?q=ig_user(559802352)+%7B%0A++followed_by.first(10)+%7B%0A++++count%2C%0A++++page_info+%7B%0A++++++end_cursor%2C%0A++++++has_next_page%0A++++%7D%2C%0A++++nodes+%7B%0A++++++id%2C%0A++++++is_verified%2C%0A++++++followed_by_viewer%2C%0A++++++requested_by_viewer%2C%0A++++++full_name%2C%0A++++++profile_pic_url%2C%0A++++++username%0A++++%7D%0A++%7D%0A%7D%0A&ref=relationships%3A%3Afollow_list', {
-//            method: 'GET',
-//            headers: new Headers({
-//                'Content-Type': 'application/json',
-//                'jsonp': true,
-//                'Access-Control-Allow-Origin': 'https://159.203.69.143:4433',
-//                'Access-Control-Allow-Credentials': true,
-//                "Access-Control-Allow-Methods":  "GET",
-//                "Access-Control-Request-Headers":  "X-Custom-Header",
-//                "Accept-Language":  "en-US",
-//                'Access-Control-Allow-Headers': 'X-Requested-With'
-//            })
-//        }).then(function (res) {
-//            console.log(res);
-//            res.json().then(function(data) {
-//                    console.log(data);
-//            });
-//        }).catch(function (err) {
-//            console.log(err);
-//        });
-
-        $.cors({
-            'url': url,
-            'success': function (data) {
-                console.log(data);
-            },
-            'error': function (err) {
-                console.log(err);
-            }
-        });
-
-        var iframe = document.getElementById('iframe');
-        iframe.id = 'iframe';
-        iframe.src = url;
-        document.body.appendChild(iframe);
-        document.domain = "159.203.69.143";
-
-//        $.get( "https://www.instagram.com/query/?q=ig_user(559802352)+%7B%0A++follows.first(100)+%7B%0A++++count%2C%0A++++page_info+%7B%0A++++++end_cursor%2C%0A++++++has_next_page%0A++++%7D%2C%0A++++nodes+%7B%0A++++++id%2C%0A++++++is_verified%2C%0A++++++followed_by_viewer%2C%0A++++++requested_by_viewer%2C%0A++++++full_name%2C%0A++++++profile_pic_url%2C%0A++++++username%0A++++%7D%0A++%7D%0A%7D%0A&ref=relationships%3A%3Afollow_list", function(data) {
-//            console.log( data);
-//        })
     })
 </script>
 </body>
