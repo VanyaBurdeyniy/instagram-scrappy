@@ -58,6 +58,12 @@
             width: 250px !important;
             margin: auto !important;
         }
+        .ui.dimmer.modals.page {
+            display: block !important;
+        }
+        .ui.dimmer.modals.page .hidden.transition {
+            display: block !important;
+        }
     </style>
 </head>
 <body>
@@ -119,6 +125,32 @@
 </div>
 
 
+<div class="ui basic modal">
+    <div class="ui icon header">
+        Please type credentials from your instagram account
+    </div>
+    <div class="content">
+        <div class="ui huge form">
+            <div class="two fields">
+                <div class="field">
+                    <label style="color:white">Username:</label>
+                    <input id="igUserName" placeholder="Username" type="text">
+                </div>
+                <div class="field">
+                    <label style="color:white">Password:</label>
+                    <input id="igUserPassword" placeholder="Password" type="password">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui green ok inverted button loginBtn">
+            Login
+        </div>
+    </div>
+</div>
+
+
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script src="semantic.min.js"></script>
 
@@ -126,7 +158,26 @@
 
     $(document).ready(function() {
 
+        $('.ui.basic.modal').modal('show');
+
         var count = 0;
+
+        $('.loginBtn').click(function() {
+            fetch('/bio', {
+                method: 'post',
+                body: JSON.stringify({userName: $('#igUserName').val(), password: $('#igUserPassword').val()}),
+                headers: new Headers({
+                    'Content-Type': 'application/json',
+                    'jsonp': true
+                })
+            }).then(function (d) {
+                d.json().then(function(data) {
+                    console.log(data);
+                });
+            }).catch(function (err) {
+                console.log(err);
+            });
+        })
 
         $('.userId').click(function() {
             $('.link').addClass('hide');
