@@ -1,4 +1,4 @@
-"use-strict";
+"use strict";
 
 var express = require('express');
 var app = express();
@@ -83,18 +83,18 @@ app.post('/login', function(req, res) {
 
 
 app.post('/followers', function(req, res) {
-    var followers = req.body.followers,
+    var followers = req.body,
         followersFiltered = [];
     followers.forEach(function(follower) {
-        if (follower.followUserBio && follower.followUserBio.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)) {
-            var emailBio = follower.followUserBio.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+        if (follower.node.followUserBio && follower.node.followUserBio.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi)) {
+            var emailBio = follower.node.followUserBio.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
             followersFiltered.push({
-                followUserFollow: follower.followUserFollow,
+                followUserFollow: follower.node.followUserFollow,
                 followUserBio: emailBio[0],
-                followerId: follower.id,
-                followerAvatar: follower.profile_pic_url,
-                followerUserName: follower.username,
-                followerFullName: follower.full_name
+                followerId: follower.node.id,
+                followerAvatar: follower.node.profile_pic_url,
+                followerUserName: follower.node.username,
+                followerFullName: follower.node.full_name
             });
         }
     });
@@ -118,7 +118,7 @@ app.post('/bio', function(req, res) {
     request('https://www.instagram.com/' + req.body.name + '/?__a=1', function (error, response, body) {
         if (!error && response.statusCode == 200) {
             body = JSON.parse(body);
-            res.status(200).jsonp({bio: body.user.biography, follows: body.user.followed_by.count});
+            res.status(200).jsonp({bio: decodeURI(body.user.biography), follows: body.user.followed_by.count});
         }
     });
 });
